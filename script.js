@@ -1,11 +1,18 @@
 let workbook;
 let baseCargada = false;
 
-// Verificar acceso admin
+// Mostrar/ocultar panel de login admin
+function toggleAdmin() {
+  const login = document.getElementById('adminLogin');
+  login.style.display = login.style.display === 'none' ? 'block' : 'none';
+}
+
+// Verificar contraseña
 function verificarAcceso() {
   const pass = document.getElementById('password').value;
   if (pass === 'primeralinea#') {
     document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('adminLogin').style.display = 'none';
   } else {
     alert('Contraseña incorrecta');
   }
@@ -25,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Buscar cliente
+// Buscar cliente por código
 function buscarCliente() {
   const codigo = document.getElementById('codigoCliente').value.trim();
   if (!baseCargada) {
@@ -76,25 +83,5 @@ function registrarNovedad() {
   const nuevaHoja = XLSX.utils.aoa_to_sheet(datos);
   workbook.Sheets[workbook.SheetNames[0]] = nuevaHoja;
 
-  document.getElementById('mensaje').textContent = '✅ Novedad registrada con éxito';
-  document.getElementById('codigoCliente').value = '';
-  document.getElementById('nombreCliente').value = '';
-  document.getElementById('novedad').value = '';
-  document.getElementById('observaciones').value = '';
-}
+  document.getElementById('mensaje').textContent
 
-// Descargar archivo actualizado
-function descargarExcel() {
-  if (!baseCargada) {
-    alert('⚠️ No hay base cargada');
-    return;
-  }
-
-  const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([wbout], { type: 'application/octet-stream' });
-
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `base_actualizada_${new Date().toISOString().slice(0, 10)}.xlsx`;
-  link.click();
-}
