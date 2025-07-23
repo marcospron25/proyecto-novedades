@@ -1,11 +1,21 @@
 body {
   font-family: Arial, sans-serif;
-  margin: 30px;
   background: #f5f5f5;
+  margin: 0;
+  padding: 20px;
 }
 
 h1 {
   color: #333;
+}
+
+.contenedor-principal {
+  max-width: 500px;
+  margin: 80px auto;
+  background: white;
+  padding: 30px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
 }
 
 input, select, textarea, button {
@@ -13,8 +23,8 @@ input, select, textarea, button {
   margin: 10px 0;
   padding: 10px;
   width: 100%;
-  max-width: 400px;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 textarea {
@@ -39,3 +49,14 @@ button:hover {
   font-weight: bold;
   color: green;
 }
+
+.admin-area {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
