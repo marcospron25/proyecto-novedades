@@ -18,15 +18,15 @@
     </div>
   </div>
 
-  <!-- FORMULARIO PRINCIPAL -->
+  <!-- FORMULARIO -->
   <div style="max-width: 500px; margin: 100px auto;">
     <h1>Registro de Novedades</h1>
 
     <label for="codigoCliente">Código de Cliente:</label>
-    <input type="text" id="codigoCliente" placeholder="Escribe el código de cliente" onblur="buscarCliente()" />
+    <input type="text" id="codigoCliente" onblur="buscarCliente()" placeholder="Ej: 123456" />
 
     <label for="nombreCliente">Nombre del Cliente:</label>
-    <input type="text" id="nombreCliente" readonly />
+    <input type="text" id="nombreCliente" readonly placeholder="Nombre aparecerá aquí..." />
 
     <label for="novedad">Selecciona una novedad:</label>
     <select id="novedad">
@@ -58,10 +58,9 @@
     </select>
 
     <label for="observaciones">Observaciones / Detalle:</label>
-    <textarea id="observaciones" placeholder="Escribe una observación adicional..."></textarea>
+    <textarea id="observaciones" placeholder="Observaciones adicionales..."></textarea>
 
     <button onclick="registrarNovedad()">Registrar Novedad</button>
-
     <div id="mensaje"></div>
   </div>
 
