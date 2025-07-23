@@ -7,19 +7,8 @@
 </head>
 <body>
 
-  <!-- ADMIN -->
-  <div style="position: absolute; top: 20px; left: 20px;">
-    <input type="password" id="password" placeholder="Contraseña admin" />
-    <button onclick="verificarAcceso()">Entrar</button>
-    <div id="adminPanel" style="display:none;">
-      <h4>Subir Base del Día (.xlsx)</h4>
-      <input type="file" id="inputArchivo" accept=".xlsx" />
-      <button onclick="descargarExcel()">Descargar con novedades</button>
-    </div>
-  </div>
-
-  <!-- FORMULARIO -->
-  <div style="max-width: 500px; margin: 100px auto;">
+  <!-- FORMULARIO PRINCIPAL (visible por defecto) -->
+  <div class="contenedor-principal">
     <h1>Registro de Novedades</h1>
 
     <label for="codigoCliente">Código de Cliente:</label>
@@ -64,7 +53,22 @@
     <div id="mensaje"></div>
   </div>
 
+  <!-- PANEL ADMIN (oculto a simple vista) -->
+  <div class="admin-area">
+    <button onclick="toggleAdmin()">🔒 Admin</button>
+    <div id="adminLogin" style="display: none;">
+      <input type="password" id="password" placeholder="Contraseña admin" />
+      <button onclick="verificarAcceso()">Entrar</button>
+    </div>
+    <div id="adminPanel" style="display: none;">
+      <h4>Subir Base del Día (.xlsx)</h4>
+      <input type="file" id="inputArchivo" accept=".xlsx" />
+      <button onclick="descargarExcel()">Descargar con novedades</button>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
