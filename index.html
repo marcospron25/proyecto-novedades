@@ -7,7 +7,6 @@
 </head>
 <body>
 
-  <!-- FORMULARIO PRINCIPAL (visible por defecto) -->
   <div class="contenedor-principal">
     <h1>Registro de Novedades</h1>
 
@@ -20,30 +19,12 @@
     <label for="novedad">Selecciona una novedad:</label>
     <select id="novedad">
       <option value="">-- Seleccionar --</option>
+      <!-- (puedes añadir más si lo deseas) -->
       <option>NO VISITA DE EJECUTIVO</option>
       <option>NO HAY DEVOLUCIONES</option>
-      <option>NO HAY CAMBIOS DE PRODUCTOS</option>
-      <option>CUPO LIMITADO</option>
-      <option>CLIENTE BLOQUEADO</option>
-      <option>SIN CREDITO</option>
-      <option>PROBLEMA EN FRECUENCIA DE LLAMADA</option>
-      <option>PROBLEMAS CON DESCUENTOS</option>
-      <option>BAJA ROTACION</option>
       <option>NEGOCIO CERRADO</option>
-      <option>COMPRA A LA COMPETENCIA</option>
-      <option>PROBLEMAS CON LOGISTICA</option>
-      <option>PROBLEMAS DE INSUFICIENCIA</option>
-      <option>EJECUTIVO NO ENCUENTRA AL CLIENTE</option>
-      <option>TIENE OTRO CODIGO</option>
-      <option>PEDIDOS SIN CONSENTIMIENTO</option>
-      <option>POR VACACIONES</option>
-      <option>FALTA DE AGUA</option>
-      <option>CLIENTE CERRADO TOTALMENTE</option>
-      <option>DELINCUENCIA (EXTORSION, VACUNAS, SECUESTROS)</option>
-      <option>COMPARTE CODIGO</option>
-      <option>COMPRA CADA 15 DIAS (O 1 VEZ AL MES)</option>
-      <option>CIERRE TEMPORAL (TEMA PERSONAL DEL CLIENTE)</option>
-      <option>NO CONTACTO (TELEFONO INCORRECTO)</option>
+      <option>CLIENTE BLOQUEADO</option>
+      <!-- ... -->
     </select>
 
     <label for="observaciones">Observaciones / Detalle:</label>
@@ -53,13 +34,15 @@
     <div id="mensaje"></div>
   </div>
 
-  <!-- PANEL ADMIN (oculto a simple vista) -->
+  <!-- Botón y panel de administración -->
   <div class="admin-area">
     <button onclick="toggleAdmin()">🔒 Admin</button>
+
     <div id="adminLogin" style="display: none;">
       <input type="password" id="password" placeholder="Contraseña admin" />
       <button onclick="verificarAcceso()">Entrar</button>
     </div>
+
     <div id="adminPanel" style="display: none;">
       <h4>Subir Base del Día (.xlsx)</h4>
       <input type="file" id="inputArchivo" accept=".xlsx" />
