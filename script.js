@@ -2,7 +2,7 @@ let workbook;
 let baseCargada = false;
 let novedadesRegistradas = [];
 
-// Mostrar/ocultar campo de login
+// Mostrar/ocultar campo de login admin
 function toggleAdmin() {
   const login = document.getElementById('adminLogin');
   login.style.display = login.style.display === 'none' ? 'block' : 'none';
@@ -28,13 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await file.arrayBuffer();
       workbook = XLSX.read(data);
       baseCargada = true;
-      novedadesRegistradas = []; // Reiniciamos novedades al cargar nueva base
       alert('📁 Base cargada con éxito');
     });
   }
 });
 
-// Buscar cliente en toda la columna C y mostrar nombre en columna D
+// Buscar cliente en columna C (índice 2)
 function buscarCliente() {
   const codigo = document.getElementById('codigoCliente').value.trim();
 
@@ -45,43 +44,46 @@ function buscarCliente() {
 
   const hoja = workbook.Sheets[workbook.SheetNames[0]];
   const datos = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+  const fila = datos.find(row => String(row[2]).trim() === codigo);
 
-  let encontrado = false;
-  for (let i = 0; i < datos.length; i++) {
-    const fila = datos[i];
-    if (String(fila[2]).trim() === codigo) {
-      document.getElementById('nombreCliente').value = fila[3] || "(sin nombre)";
-      encontrado = true;
-      break;
-    }
-  }
-
-  if (!encontrado) {
+  if (fila) {
+    document.getElementById('nombreCliente').value = fila[3] || "(sin nombre)";
+  } else {
     document.getElementById('nombreCliente').value = "❌ No encontrado";
   }
 }
 
-// Registrar novedad (siempre permitido)
+// Registrar novedad
 function registrarNovedad() {
   const codigo = document.getElementById('codigoCliente').value.trim();
   const novedad = document.getElementById('novedad').value;
   const obs = document.getElementById('observaciones').value;
   const nombre = document.getElementById('nombreCliente').value || "(sin nombre)";
-  
+
   if (!codigo || !novedad) {
     alert('⚠️ Completa todos los campos obligatorios');
     return;
   }
 
-  // Fecha y hora separados, con formato dd/mm/yyyy y hh:mm
+  // Obtener fecha y hora actual separados
   const ahora = new Date();
-  const fecha = ahora.toLocaleDateString('es-ES'); // ej: 24/07/2025
-  const hora = ahora.toTimeString().slice(0,5); // ej: 04:46
+  const fecha = ahora.toLocaleDateString('es-ES');  // dd/mm/yyyy con /
+  const hora = ahora.toLocaleTimeString('es-ES', { hour12: false }); // hh:mm:ss 24h
 
-  // Guardamos novedades con codigo y fecha/hora para referencia
-  novedadesRegistradas.push({ codigo, nombre, novedad, obs, fecha, hora });
+  // Guardamos novedad en un objeto para mapear por código
+  // Si ya existe, actualizamos
+  const idxExistente = novedadesRegistradas.findIndex(n => n.codigo === codigo);
+  const novedadObjeto = { codigo, nombre, novedad, obs, fecha, hora };
+
+  if (idxExistente >= 0) {
+    novedadesRegistradas[idxExistente] = novedadObjeto;
+  } else {
+    novedadesRegistradas.push(novedadObjeto);
+  }
 
   document.getElementById('mensaje').textContent = '✅ Novedad registrada correctamente';
+
+  // Limpiar campos para nuevo registro
   document.getElementById('codigoCliente').value = '';
   document.getElementById('nombreCliente').value = '';
   document.getElementById('novedad').value = '';
@@ -92,53 +94,69 @@ function registrarNovedad() {
   }, 3000);
 }
 
-// Descargar Excel con base + novedades añadidas
+// Descargar Excel con novedades integradas en base original
 function descargarExcel() {
   if (!baseCargada) {
     alert("⚠️ Debes cargar primero una base para descargar.");
     return;
   }
-  
+  if (novedadesRegistradas.length === 0) {
+    alert("⚠️ No hay novedades registradas para descargar.");
+    return;
+  }
+
   const hoja = workbook.Sheets[workbook.SheetNames[0]];
   const datos = XLSX.utils.sheet_to_json(hoja, { header: 1 });
 
-  // Añadimos encabezados para nuevas columnas, si no existen
   const header = datos[0];
-  if (!header.includes('Novedad')) header.push('Novedad');
-  if (!header.includes('Observaciones')) header.push('Observaciones');
-  if (!header.includes('Fecha')) header.push('Fecha');
-  if (!header.includes('Hora')) header.push('Hora');
 
-  // Creamos un map de novedades para acceso rápido por código
+  // Columnas nuevas para agregar si no existen
+  const nuevasColumnas = ['Novedad', 'Observaciones', 'Fecha', 'Hora'];
+  nuevasColumnas.forEach(col => {
+    if (!header.includes(col)) header.push(col);
+  });
+
+  // Índices de columnas nuevas
+  const idxNovedad = header.indexOf('Novedad');
+  const idxObs = header.indexOf('Observaciones');
+  const idxFecha = header.indexOf('Fecha');
+  const idxHora = header.indexOf('Hora');
+
+  // Map para novedades rápido por código
   const novedadesMap = {};
   novedadesRegistradas.forEach(n => {
     novedadesMap[n.codigo] = n;
   });
 
-  // Recorremos las filas para añadir novedades a cada cliente
+  // Recorremos filas para agregar novedades en la base
   for (let i = 1; i < datos.length; i++) {
     const fila = datos[i];
+
+    while (fila.length < header.length) {
+      fila.push("");
+    }
+
     const codigoFila = String(fila[2]).trim();
 
     if (novedadesMap[codigoFila]) {
-      // Si ya hay datos en columnas extra, actualizar, sino crear
-      fila[header.indexOf('Novedad')] = novedadesMap[codigoFila].novedad;
-      fila[header.indexOf('Observaciones')] = novedadesMap[codigoFila].obs;
-      fila[header.indexOf('Fecha')] = novedadesMap[codigoFila].fecha;
-      fila[header.indexOf('Hora')] = novedadesMap[codigoFila].hora;
+      fila[idxNovedad] = novedadesMap[codigoFila].novedad;
+      fila[idxObs] = novedadesMap[codigoFila].obs;
+      fila[idxFecha] = novedadesMap[codigoFila].fecha;
+      fila[idxHora] = novedadesMap[codigoFila].hora;
     } else {
-      // Si no hay novedad para ese código, limpiar esas columnas
-      fila[header.indexOf('Novedad')] = "";
-      fila[header.indexOf('Observaciones')] = "";
-      fila[header.indexOf('Fecha')] = "";
-      fila[header.indexOf('Hora')] = "";
+      fila[idxNovedad] = "";
+      fila[idxObs] = "";
+      fila[idxFecha] = "";
+      fila[idxHora] = "";
     }
   }
 
-  // Convertimos datos de vuelta a hoja
+  // Convertimos a hoja y libro XLSX
   const nuevaHoja = XLSX.utils.aoa_to_sheet(datos);
   const nuevoLibro = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(nuevoLibro, nuevaHoja, "Base con Novedades");
 
-  XLSX.writeFile(nuevoLibro, `base_actualizada_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.xlsx`);
+  const fechaArchivo = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
+  XLSX.writeFile(nuevoLibro, `base_actualizada_${fechaArchivo}.xlsx`);
 }
+
