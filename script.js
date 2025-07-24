@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Buscar cliente (opcional, no bloqueante)
+// Buscar cliente en toda la columna C y mostrar nombre en columna D
 function buscarCliente() {
   const codigo = document.getElementById('codigoCliente').value.trim();
 
@@ -45,12 +45,17 @@ function buscarCliente() {
   const hoja = workbook.Sheets[workbook.SheetNames[0]];
   const datos = XLSX.utils.sheet_to_json(hoja, { header: 1 });
 
-  // Buscar el código en la columna 2 (C) — convertir ambos a string y recortar espacios
-  const fila = datos.find(row => String(row[2]).trim() === codigo);
+  let encontrado = false;
+  for (let i = 0; i < datos.length; i++) {
+    const fila = datos[i];
+    if (String(fila[2]).trim() === codigo) {
+      document.getElementById('nombreCliente').value = fila[3] || "(sin nombre)";
+      encontrado = true;
+      break;
+    }
+  }
 
-  if (fila) {
-    document.getElementById('nombreCliente').value = fila[3] || "(sin nombre)";
-  } else {
+  if (!encontrado) {
     document.getElementById('nombreCliente').value = "❌ No encontrado";
   }
 }
@@ -68,7 +73,8 @@ function registrarNovedad() {
     return;
   }
 
-  novedadesRegistradas.push([codigo, nombre, novedad, obs, now]);
+  const nuevaFila = [codigo, nombre, novedad, obs, now];
+  novedadesRegistradas.push(nuevaFila);
 
   document.getElementById('mensaje').textContent = '✅ Novedad registrada correctamente';
   document.getElementById('codigoCliente').value = '';
@@ -93,3 +99,4 @@ function descargarExcel() {
   XLSX.utils.book_append_sheet(nuevoLibro, hoja, "Novedades");
   XLSX.writeFile(nuevoLibro, "novedades_registradas.xlsx");
 }
+
