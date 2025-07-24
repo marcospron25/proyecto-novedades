@@ -19,30 +19,30 @@
     <label for="novedad">Selecciona una novedad:</label>
     <select id="novedad">
       <option value="">-- Seleccionar --</option>
-      <option value="NO VISITA DE EJECUTIVO">NO VISITA DE EJECUTIVO</option>
-      <option value="NO HAY DEVOLUCIONES">NO HAY DEVOLUCIONES</option>
-      <option value="NO HAY CAMBIOS DE PRODUCTOS">NO HAY CAMBIOS DE PRODUCTOS</option>
-      <option value="CUPO LIMITADO">CUPO LIMITADO</option>
-      <option value="CLIENTE BLOQUEADO">CLIENTE BLOQUEADO</option>
-      <option value="SIN CREDITO">SIN CREDITO</option>
-      <option value="PROBLEMA EN FRECUENCIA DE LLAMADA">PROBLEMA EN FRECUENCIA DE LLAMADA</option>
-      <option value="PROBLEMAS CON DESCUENTOS">PROBLEMAS CON DESCUENTOS</option>
-      <option value="BAJA ROTACION">BAJA ROTACION</option>
-      <option value="NEGOCIO CERRADO">NEGOCIO CERRADO</option>
-      <option value="COMPRA A LA COMPETENCIA">COMPRA A LA COMPETENCIA</option>
-      <option value="PROBLEMAS CON LOGISTICA">PROBLEMAS CON LOGISTICA</option>
-      <option value="PROBLEMAS DE INSUFICIENCIA">PROBLEMAS DE INSUFICIENCIA</option>
-      <option value="EJECUTIVO NO ENCUENTRA AL CLIENTE">EJECUTIVO NO ENCUENTRA AL CLIENTE</option>
-      <option value="TIENE OTRO CODIGO">TIENE OTRO CODIGO</option>
-      <option value="PEDIDOS SIN CONSENTIMIENTO">PEDIDOS SIN CONSENTIMIENTO</option>
-      <option value="POR VACACIONES">POR VACACIONES</option>
-      <option value="FALTA DE AGUA">FALTA DE AGUA</option>
-      <option value="CLIENTE CERRADO TOTALMENTE">CLIENTE CERRADO TOTALMENTE</option>
-      <option value="DELINCUENCIA (EXTORSION, VACUNAS, SECUESTROS)">DELINCUENCIA (EXTORSION, VACUNAS, SECUESTROS)</option>
-      <option value="COMPARTE CODIGO">COMPARTE CODIGO</option>
-      <option value="COMPRA CADA 15 DIAS (O 1 VEZ AL MES)">COMPRA CADA 15 DIAS (O 1 VEZ AL MES)</option>
-      <option value="CIERRE TEMPORAL (TEMA PERSONAL DEL CLIENTE)">CIERRE TEMPORAL (TEMA PERSONAL DEL CLIENTE)</option>
-      <option value="NO CONTACTO ( TELEFONO INCORRECTO)">NO CONTACTO ( TELEFONO INCORRECTO)</option>
+      <option>NO VISITA DE EJECUTIVO</option>
+      <option>NO HAY DEVOLUCIONES</option>
+      <option>NO HAY CAMBIOS DE PRODUCTOS</option>
+      <option>CUPO LIMITADO</option>
+      <option>CLIENTE BLOQUEADO</option>
+      <option>SIN CREDITO</option>
+      <option>PROBLEMA EN FRECUENCIA DE LLAMADA</option>
+      <option>PROBLEMAS CON DESCUENTOS</option>
+      <option>BAJA ROTACION</option>
+      <option>NEGOCIO CERRADO</option>
+      <option>COMPRA A LA COMPETENCIA</option>
+      <option>PROBLEMAS CON LOGISTICA</option>
+      <option>PROBLEMAS DE INSUFICIENCIA</option>
+      <option>EJECUTIVO NO ENCUENTRA AL CLIENTE</option>
+      <option>TIENE OTRO CODIGO</option>
+      <option>PEDIDOS SIN CONSENTIMIENTO</option>
+      <option>POR VACACIONES</option>
+      <option>FALTA DE AGUA</option>
+      <option>CLIENTE CERRADO TOTALMENTE</option>
+      <option>DELINCUENCIA (EXTORSION, VACUNAS, SECUESTROS)</option>
+      <option>COMPARTE CODIGO</option>
+      <option>COMPRA CADA 15 DIAS (O 1 VEZ AL MES)</option>
+      <option>CIERRE TEMPORAL (TEMA PERSONAL DEL CLIENTE)</option>
+      <option>NO CONTACTO (TELEFONO INCORRECTO)</option>
     </select>
 
     <label for="observaciones">Observaciones / Detalle:</label>
@@ -65,6 +65,9 @@
       <h4>Subir Base del Día (.xlsx)</h4>
       <input type="file" id="inputArchivo" accept=".xlsx" />
       <button onclick="descargarExcel()">Descargar con novedades</button>
+
+      <h4>Bases cargadas:</h4>
+      <ul id="listaBases" style="max-height: 150px; overflow-y: auto; padding-left: 20px; border: 1px solid #ddd; border-radius: 5px;"></ul>
     </div>
   </div>
 
