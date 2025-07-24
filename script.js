@@ -44,7 +44,9 @@ function buscarCliente() {
 
   const hoja = workbook.Sheets[workbook.SheetNames[0]];
   const datos = XLSX.utils.sheet_to_json(hoja, { header: 1 });
-  const fila = datos.find(row => row[2] === codigo);
+
+  // Buscar el código en la columna 2 (C) — convertir ambos a string y recortar espacios
+  const fila = datos.find(row => String(row[2]).trim() === codigo);
 
   if (fila) {
     document.getElementById('nombreCliente').value = fila[3] || "(sin nombre)";
@@ -66,8 +68,7 @@ function registrarNovedad() {
     return;
   }
 
-  const nuevaFila = [codigo, nombre, novedad, obs, now];
-  novedadesRegistradas.push(nuevaFila);
+  novedadesRegistradas.push([codigo, nombre, novedad, obs, now]);
 
   document.getElementById('mensaje').textContent = '✅ Novedad registrada correctamente';
   document.getElementById('codigoCliente').value = '';
