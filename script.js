@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await file.arrayBuffer();
       workbook = XLSX.read(data);
       baseCargada = true;
+      novedadesRegistradas = []; // Reiniciamos novedades al cargar nueva base
       alert('📁 Base cargada con éxito');
     });
   }
@@ -66,15 +67,19 @@ function registrarNovedad() {
   const novedad = document.getElementById('novedad').value;
   const obs = document.getElementById('observaciones').value;
   const nombre = document.getElementById('nombreCliente').value || "(sin nombre)";
-  const now = new Date().toISOString().slice(0, 16).replace("T", " ");
-
+  
   if (!codigo || !novedad) {
     alert('⚠️ Completa todos los campos obligatorios');
     return;
   }
 
-  const nuevaFila = [codigo, nombre, novedad, obs, now];
-  novedadesRegistradas.push(nuevaFila);
+  // Fecha y hora separados, con formato dd/mm/yyyy y hh:mm
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-ES'); // ej: 24/07/2025
+  const hora = ahora.toTimeString().slice(0,5); // ej: 04:46
+
+  // Guardamos novedades con codigo y fecha/hora para referencia
+  novedadesRegistradas.push({ codigo, nombre, novedad, obs, fecha, hora });
 
   document.getElementById('mensaje').textContent = '✅ Novedad registrada correctamente';
   document.getElementById('codigoCliente').value = '';
@@ -87,16 +92,53 @@ function registrarNovedad() {
   }, 3000);
 }
 
-// Descargar Excel con novedades
+// Descargar Excel con base + novedades añadidas
 function descargarExcel() {
-  if (novedadesRegistradas.length === 0) {
-    alert("⚠️ No hay novedades registradas para descargar.");
+  if (!baseCargada) {
+    alert("⚠️ Debes cargar primero una base para descargar.");
     return;
   }
+  
+  const hoja = workbook.Sheets[workbook.SheetNames[0]];
+  const datos = XLSX.utils.sheet_to_json(hoja, { header: 1 });
 
-  const hoja = XLSX.utils.aoa_to_sheet([["Código", "Nombre", "Novedad", "Observaciones", "Fecha"], ...novedadesRegistradas]);
+  // Añadimos encabezados para nuevas columnas, si no existen
+  const header = datos[0];
+  if (!header.includes('Novedad')) header.push('Novedad');
+  if (!header.includes('Observaciones')) header.push('Observaciones');
+  if (!header.includes('Fecha')) header.push('Fecha');
+  if (!header.includes('Hora')) header.push('Hora');
+
+  // Creamos un map de novedades para acceso rápido por código
+  const novedadesMap = {};
+  novedadesRegistradas.forEach(n => {
+    novedadesMap[n.codigo] = n;
+  });
+
+  // Recorremos las filas para añadir novedades a cada cliente
+  for (let i = 1; i < datos.length; i++) {
+    const fila = datos[i];
+    const codigoFila = String(fila[2]).trim();
+
+    if (novedadesMap[codigoFila]) {
+      // Si ya hay datos en columnas extra, actualizar, sino crear
+      fila[header.indexOf('Novedad')] = novedadesMap[codigoFila].novedad;
+      fila[header.indexOf('Observaciones')] = novedadesMap[codigoFila].obs;
+      fila[header.indexOf('Fecha')] = novedadesMap[codigoFila].fecha;
+      fila[header.indexOf('Hora')] = novedadesMap[codigoFila].hora;
+    } else {
+      // Si no hay novedad para ese código, limpiar esas columnas
+      fila[header.indexOf('Novedad')] = "";
+      fila[header.indexOf('Observaciones')] = "";
+      fila[header.indexOf('Fecha')] = "";
+      fila[header.indexOf('Hora')] = "";
+    }
+  }
+
+  // Convertimos datos de vuelta a hoja
+  const nuevaHoja = XLSX.utils.aoa_to_sheet(datos);
   const nuevoLibro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(nuevoLibro, hoja, "Novedades");
-  XLSX.writeFile(nuevoLibro, "novedades_registradas.xlsx");
-}
+  XLSX.utils.book_append_sheet(nuevoLibro, nuevaHoja, "Base con Novedades");
 
+  XLSX.writeFile(nuevoLibro, `base_actualizada_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.xlsx`);
+}
